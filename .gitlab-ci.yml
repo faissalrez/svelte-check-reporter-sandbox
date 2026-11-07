@@ -13,3 +13,19 @@ check:
     when: always
     reports:
       codequality: gl-codequality.json
+
+# Lint, with eslint-formatter-gitlab, to compare its widget with svelte-check-reporter's
+lint:
+  image: node:24-alpine
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  variables:
+    ESLINT_CODE_QUALITY_REPORT: gl-codequality-eslint.json
+  script:
+    - npm ci
+    - npx eslint src --format gitlab
+  artifacts:
+    when: always
+    reports:
+      codequality: gl-codequality-eslint.json
